@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Speda - Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { padding-top: 70px; }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="pemweb.html">
+        <img src="speda.jpg" alt="Logo" width="30" height="30" class="me-2">
+        Speda
+      </a>          
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link active" href="pemweb.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="addMahasiswa.html">Tambah Mahasiswa</a></li>
+        </ul>
+        <form class="d-flex" role="search" onsubmit="return false;">
+          <input id="searchInput" class="form-control me-2" type="search" placeholder="Cari nama / NIM / jurusan" aria-label="Search" />
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center my-3">
+      <h1 class="h4">Daftar Mahasiswa</h1>
+      <a href="addMahasiswa.html" class="btn btn-success">Tambah Mahasiswa</a>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>No</th>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Jurusan</th>
+            <th>Jenis Kelamin</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="studentsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Konfirmasi Hapus</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          Hapus mahasiswa: <strong id="deleteStudentName"></strong><br/>
+          NIM: <span id="deleteStudentNIM"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Hapus</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Mahasiswa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm">
+            <div class="mb-3">
+              <label class="form-label">NIM</label>
+              <input type="text" id="editNIM" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nama</label>
+              <input type="text" id="editNama" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Jurusan</label>
+              <input type="text" id="editJurusan" class="form-control">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Jenis Kelamin</label>
+              <select id="editGender" class="form-control" required>
+                <option value="Laki-laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const STORAGE_KEY = 'speda_students';
+    const sampleStudents = [
+      { nim: "210001", nama: "Budi Santoso", jurusan: "Informatika", gender: "Laki-laki" },
+      { nim: "210002", nama: "Siti Aminah", jurusan: "Sistem Informasi", gender: "Perempuan" }
+    ];
+
+    function initData() {
+      if (!localStorage.getItem(STORAGE_KEY)) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sampleStudents));
+      }
+    }
+    function getStudents() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    }
+    function saveStudents(arr) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
+
+    function renderTable(query = '') {
+      const tbody = document.getElementById('studentsTbody');
+      tbody.innerHTML = '';
+      const q = query.trim().toLowerCase();
+      const students = getStudents().filter(s => {
+        if (!q) return true;
+        return s.nama.toLowerCase().includes(q) ||
+               s.nim.toLowerCase().includes(q) ||
+               (s.jurusan && s.jurusan.toLowerCase().includes(q));
+      });
+      if (students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center">Data tidak ditemukan</td></tr>';
+        return;
+      }
+      students.forEach((s, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${s.nim}</td>
+          <td>${s.nama}</td>
+          <td>${s.jurusan || '-'}</td>
+          <td>${s.gender || '-'}</td>
+          <td>
+            <button class="btn btn-sm btn-warning btn-edit" data-nim="${s.nim}">Edit</button>
+            <button class="btn btn-sm btn-danger btn-delete" data-nim="${s.nim}" data-nama="${s.nama}">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      document.querySelectorAll('.btn-delete').forEach(btn => {
+        btn.addEventListener('click', () => {
+          showDeleteModal(btn.dataset.nim, btn.dataset.nama);
+        });
+      });
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const nim = btn.dataset.nim;
+          const mhs = getStudents().find(s => s.nim === nim);
+          document.getElementById('editNIM').value = mhs.nim;
+          document.getElementById('editNama').value = mhs.nama;
+          document.getElementById('editJurusan').value = mhs.jurusan;
+          document.getElementById('editGender').value = mhs.gender;
+          editModalInstance.show();
+        });
+      });
+    }
+
+    let selectedNIM = null;
+    let deleteModalInstance = null;
+    let editModalInstance = null;
+
+    function showDeleteModal(nim, nama) {
+      selectedNIM = nim;
+      document.getElementById('deleteStudentName').textContent = nama;
+      document.getElementById('deleteStudentNIM').textContent = nim;
+      if (!deleteModalInstance) deleteModalInstance = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+      deleteModalInstance.show();
+    }
+
+    document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+      if (!selectedNIM) return;
+      const students = getStudents().filter(s => s.nim !== selectedNIM);
+      saveStudents(students);
+      selectedNIM = null;
+      if (deleteModalInstance) deleteModalInstance.hide();
+      renderTable(document.getElementById('searchInput').value);
+    });
+
+    document.getElementById('editForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nim = document.getElementById('editNIM').value;
+      const nama = document.getElementById('editNama').value;
+      const jurusan = document.getElementById('editJurusan').value;
+      const gender = document.getElementById('editGender').value;
+      let students = getStudents();
+      const index = students.findIndex(s => s.nim === nim);
+      if (index !== -1) {
+        students[index].nama = nama;
+        students[index].jurusan = jurusan;
+        students[index].gender = gender;
+        saveStudents(students);
+      }
+      editModalInstance.hide();
+      renderTable(document.getElementById('searchInput').value);
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      renderTable(e.target.value);
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initData();
+      editModalInstance = new bootstrap.Modal(document.getElementById('editModal'));
+      renderTable();
+    });
+  </script>
+</body>
+</html>
