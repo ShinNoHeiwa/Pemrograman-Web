@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Testimonial Carousel - Demo</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<style>
+    :root{
+        --bg: #1A1A1A;
+        --grad-left: #5F30F8;
+        --grad-right: #FC8867;
+        --btn-bg: #2D272A;
+        --card-bg: rgba(33,33,33,0.6);
+    }
+    html,body{
+        height:100%;
+        margin:0;
+        font-family:'Poppins',sans-serif;
+        background:var(--bg);
+        color:#fff;
+    }
+    .testimonial-section{
+        position:relative;
+        padding:48px 16px 120px;
+        overflow:hidden;
+    }
+    .testimonial-section::after{
+        content:"";
+        position:absolute;
+        right:-20%;
+        bottom:-10%;
+        width:640px;
+        height:640px;
+        background:
+        radial-gradient(circle at 30% 30%, rgba(95,48,248,0.45) 0%, rgba(252,136,103,0.32) 30%, transparent 55%);
+        filter: blur(48px);
+        pointer-events:none;
+        z-index:0;
+    }
+    .testimonial-heading h2{
+        margin:0;
+        font-weight:700;
+        font-size:28px;
+        background: linear-gradient(90deg,var(--grad-left), var(--grad-right));
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+    }
+    .testimonial-heading p{
+        margin:6px 0 0;
+        color:#BDBDBD;
+        max-width:700px;
+    }
+    .controls{
+        display:flex;
+        gap:8px;
+        align-items:center;
+    }
+    .carousel-btn{
+        background:var(--btn-bg);
+        border:0;
+        padding:8px 10px;
+        border-radius:8px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        transition:background .12s ease, transform .12s ease;
+        width:40px;
+        height:36px;
+    }
+    .carousel-btn:hover{
+        background: rgba(43,39,41,0.7);
+    }
+    .carousel-btn:active{
+        transform: scale(.94);
+    }
+    .carousel-btn.pressed{ 
+        transform: scale(.92); 
+    }
+    .cards{
+        margin-top:28px;
+        display:flex;
+        gap:20px;
+        overflow-x:auto;
+        padding-bottom:12px;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        z-index:1;
+    }
+    .cards::-webkit-scrollbar{ 
+        height:8px; 
+    }
+    .cards::-webkit-scrollbar-thumb{ 
+        background: rgba(255,255,255,0.06); 
+        border-radius:8px; 
+    }
+
+    .testimonial-card{
+      min-width:300px; 
+      background: var(--card-bg);
+      border-radius:12px;
+      padding:18px;
+      flex:0 0 auto;
+      scroll-snap-align:center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    }
+    .testimonial-card p{ color:#D1D1D1; font-size:14px; line-height:1.45; margin-bottom:12px; }
+    .testimonial-card .meta{ display:flex; align-items:center; gap:12px; margin-top:8px; }
+    .testimonial-card img{ width:64px; height:64px; border-radius:50%; object-fit:cover; }
+    .testimonial-card .name{ font-weight:600; margin:0; }
+    .testimonial-card .role{ font-size:12px; color:#BFBFBF; margin:0; }
+
+    .stars .material-symbols-outlined{ font-size:18px; color:#e3e3e3; vertical-align:middle; margin-right:2px; }
+
+    @media (max-width:768px){
+      .testimonial-heading h2{ font-size:22px; }
+      .testimonial-card{ min-width:260px; }
+    }
+  </style>
+</head>
+<body>
+    <section class="testimonial-section">
+        <div class="container">
+        <div class="d-flex justify-content-between align-items-start testimonial-heading">
+            <div>
+                <h2>Testimonial</h2>
+                <p>Penilaian terhadap web yang dibuat pemerintah.</p>
+            </div>
+            <div class="controls">
+            <button class="carousel-btn btn-prev" aria-label="Sebelumnya">
+                <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <button class="carousel-btn btn-next" aria-label="Berikutnya">
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+            </div>
+        </div>
+        <div class="cards" id="cards">
+            <div class="testimonial-card">
+                <p>Lemot, sering down juga, ga dirawat.</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="stars">
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div class="meta">
+                <img src="https://avatars.pfptown.com/008/thumb-512-minion-6038.webp" alt="avatar">
+                <div>
+                    <p class="name mb-0">Hizkia</p>
+                    <p class="role mb-0">Mahasiswa</p>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="testimonial-card">
+                <p>gampang ke hack, giliran kejadian mohon mohon buat jangan di hack lawak.</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="stars">
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div class="meta">
+                <img src="https://avatars.pfptown.com/008/thumb-512-minion-6038.webp" alt="avatar">
+                <div>
+                    <p class="name mb-0">Fufufaaa</p>
+                    <p class="role mb-0">Kritikus</p>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="testimonial-card">
+                <p>Desainnya kaku, ketinggalan zaman.</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="stars">
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div class="meta">
+                <img src="https://avatars.pfptown.com/008/thumb-512-minion-6038.webp" alt="avatar">
+                <div>
+                    <p class="name mb-0">anonim</p>
+                    <p class="role mb-0">-</p>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="testimonial-card">
+                <p>Kurang menarik.</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="stars">
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div class="meta">
+                <img src="https://avatars.pfptown.com/008/thumb-512-minion-6038.webp" alt="avatar">
+                <div>
+                    <p class="name mb-0">Raditya Dika</p>
+                    <p class="role mb-0">Penulis</p>
+                </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="testimonial-card">
+                <p>Gacor king.</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="stars">
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                    <span class="material-symbols-outlined">star</span>
+                </div>
+                <div class="meta">
+                <img src="https://avatars.pfptown.com/008/thumb-512-minion-6038.webp" alt="avatar">
+                <div>
+                    <p class="name mb-0">anonim</p>
+                    <p class="role mb-0">anonim</p>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div> 
+    </section>
+
+    <script>
+        (function(){
+        const cards = document.getElementById('cards');
+        const btnNext = document.querySelector('.btn-next');
+        const btnPrev = document.querySelector('.btn-prev');
+
+        function getStep(){
+            const card = cards.querySelector('.testimonial-card');
+            if(!card) return 300;
+            const rect = card.getBoundingClientRect();
+            const gapVal = parseFloat(getComputedStyle(cards).gap) || 20;
+            return Math.round(rect.width + gapVal);
+        }
+
+        function flashButton(btn){
+            btn.classList.add('pressed');
+            setTimeout(()=>btn.classList.remove('pressed'),120);
+        }
+
+        btnNext.addEventListener('click', ()=>{
+            flashButton(btnNext);
+            cards.scrollBy({ left: getStep(), behavior: 'smooth' });
+        });
+        btnPrev.addEventListener('click', ()=>{
+            flashButton(btnPrev);
+            cards.scrollBy({ left: -getStep(), behavior: 'smooth' });
+        });
+
+        function updateControls(){
+            const maxLeft = cards.scrollWidth - cards.clientWidth;
+            btnPrev.disabled = cards.scrollLeft <= 0;
+            btnNext.disabled = Math.ceil(cards.scrollLeft) >= maxLeft;
+            btnPrev.style.opacity = btnPrev.disabled ? 0.45 : 1;
+            btnNext.style.opacity = btnNext.disabled ? 0.45 : 1;
+        }
+        cards.addEventListener('scroll', updateControls);
+        window.addEventListener('resize', updateControls);
+        updateControls();
+        })();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
